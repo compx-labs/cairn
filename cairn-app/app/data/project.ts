@@ -35,8 +35,8 @@ export type Project = z.infer<typeof ProjectSchema>;
 
 const rawProject: Project = {
   slug: "compx",
-  name: "Cairn Demo – CompX",
-  logoUrl: "/cairn-logo.svg",
+  name: "CompX Transparency Dashboard",
+  logoUrl: "/cairn-logo.png",
   description: "Public, on-chain transparency dashboard for the CompX treasury.",
   wallets: [
     { label: "Treasury", address: "TREASURY_ADDR_XXXXXXXXXXXXXX" },

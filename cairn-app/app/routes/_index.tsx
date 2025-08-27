@@ -38,7 +38,7 @@ export default function Index() {
                 <img 
                   src={project.logoUrl} 
                   alt={project.name}
-                  className="h-12 w-12"
+                  className="h-12 w-12 rounded-full"
                 />
                 <div>
                   <h1 className="text-3xl font-bold text-ink-700 dark:text-dark-text font-heading transition-colors duration-200">{project.name}</h1>
