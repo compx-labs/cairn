@@ -5,7 +5,7 @@ import { ThemeToggle } from "~/components/ThemeToggle";
 
 export function meta() {
   return [
-    { title: `${project.name} – Web3 Transparency Dashboard` },
+    { title: `Cairn - Guiding clarity on-chain` },
     {
       name: "description",
       content:
