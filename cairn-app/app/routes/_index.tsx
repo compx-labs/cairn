@@ -404,10 +404,10 @@ export default function Index() {
               </svg>
             </Link>
             <a
-              href="mailto:hello@cairn.guide"
+              href="mailto:kieran@compx.io"
               className="inline-flex items-center px-8 py-4 rounded-xl border-2 border-white/30 text-white hover:bg-white/10 transition-colors duration-200"
             >
-              Get Started
+              Contact us
             </a>
           </div>
         </div>
