@@ -72,7 +72,7 @@ export function TransactionsTable({ transactions }: TransactionsTableProps) {
           </thead>
           <tbody className="divide-y divide-line dark:divide-dark-border bg-white dark:bg-dark-surface transition-colors duration-200">
             {transactions.map((tx, idx) => (
-              <tr key={`${tx.hash}-${idx}`} className="hover:bg-ink-50 dark:hover:bg-dark-hover transition-colors duration-200">
+              <tr key={`${tx.hash}-${idx}`} className="hover:bg-ink-50 dark:hover:bg-dark-border/50 transition-colors duration-200">
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-ink-600 dark:text-dark-text-muted transition-colors duration-200">
                   {formatTime(tx.ts)}
                 </td>
