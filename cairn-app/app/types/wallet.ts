@@ -57,3 +57,39 @@ export interface WalletResponse {
   createdAt: string;
   updatedAt: string;
 }
+
+// Transaction types from Algorand Indexer API
+export interface AlgorandTransaction {
+  id: string;
+  "confirmed-round": number;
+  "round-time": number;
+  sender: string;
+  "tx-type": string;
+  fee: number;
+  "payment-transaction"?: {
+    amount: number;
+    receiver: string;
+    "close-amount"?: number;
+    "close-remainder-to"?: string;
+  };
+  "asset-transfer-transaction"?: {
+    amount: number;
+    "asset-id": number;
+    receiver: string;
+    sender?: string;
+    "close-amount"?: number;
+    "close-to"?: string;
+  };
+  "application-transaction"?: {
+    "application-id": number;
+    "on-completion": string;
+    // ... other app transaction fields
+  };
+  // ... other transaction types
+}
+
+export interface TransactionsResponse {
+  "current-round": number;
+  "next-token"?: string;
+  transactions: AlgorandTransaction[];
+}

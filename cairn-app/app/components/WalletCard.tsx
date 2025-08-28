@@ -2,12 +2,49 @@
 import type { TreasurySnapshot } from "~/types/treasury";
 import { CopyButton } from "./CopyButton";
 import { ExplorerButton } from "./ExplorerButton";
+import { SkeletonCard, SkeletonTitle, SkeletonText } from "./Skeleton";
+import { AssetIcon } from "./AssetIcon";
 
 interface WalletCardProps {
-  wallet: TreasurySnapshot["wallets"][0];
+  wallet?: TreasurySnapshot["wallets"][0];
+  isLoading?: boolean;
+  label?: string;
+  address?: string;
 }
 
-export function WalletCard({ wallet }: WalletCardProps) {
+export function WalletCard({ wallet, isLoading = false, label: fallbackLabel, address: fallbackAddress }: WalletCardProps) {
+  if (isLoading || !wallet) {
+    return (
+      <SkeletonCard>
+        <div className="flex items-center justify-between mb-4">
+          <SkeletonTitle className="w-24" />
+          <SkeletonText className="w-20" />
+        </div>
+
+        <div className="mb-4">
+          <div className="flex items-center gap-2 text-sm mb-2">
+            <SkeletonText className="w-32 h-4" />
+            <div className="w-4 h-4 bg-ink-200 dark:bg-dark-border rounded" />
+            <div className="w-4 h-4 bg-ink-200 dark:bg-dark-border rounded" />
+          </div>
+          <SkeletonTitle className="w-20 h-6" />
+        </div>
+
+        <div className="space-y-2">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex justify-between items-center">
+              <SkeletonText className="w-12" />
+              <div className="text-right">
+                <SkeletonText className="w-16 mb-1" />
+                <SkeletonText className="w-12 h-3" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </SkeletonCard>
+    );
+  }
+
   const { label, address, balances, lastUpdated } = wallet;
   
   // Calculate total USD value for this wallet
@@ -38,7 +75,18 @@ export function WalletCard({ wallet }: WalletCardProps) {
       <div className="space-y-2">
         {balances.slice(0, 3).map((balance, idx) => (
           <div key={idx} className="flex justify-between items-center">
-            <span className="text-sm font-medium text-ink-600 dark:text-dark-text-muted transition-colors duration-200">{balance.symbol}</span>
+            <div className="flex items-center gap-2">
+              {balance.assetId !== undefined && (
+                <AssetIcon 
+                  assetId={balance.assetId} 
+                  symbol={balance.symbol} 
+                  size="sm" 
+                />
+              )}
+              <span className="text-sm font-medium text-ink-600 dark:text-dark-text-muted transition-colors duration-200">
+                {balance.displayName || balance.symbol}
+              </span>
+            </div>
             <div className="text-right">
               <div className="text-sm font-semibold text-ink-700 dark:text-dark-text transition-colors duration-200">
                 {balance.amount.toLocaleString(undefined, { 

@@ -1,19 +1,24 @@
 // app/contexts/WalletContext.tsx
-import React, { createContext, useContext, useState, useEffect } from "react";
-import axios from "axios";
+import React, { createContext, useContext } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { project } from "~/data/project";
-import { clientConfig } from "~/config/client";
-import type { WalletResponse, WalletData } from "~/types/wallet";
+import { useWalletData, useAggregatedTransactions } from "~/hooks/useWalletQueries";
+import type { WalletData } from "~/types/wallet";
+import type { SerializableTx } from "~/types/treasury";
 
-// API function to fetch wallet info
-async function fetchWalletInfo(address: string): Promise<WalletData> {
-  const response = await axios.get<WalletResponse>(`${clientConfig.COMPX_GENERAL_BACKEND_URL}/account/${address}`);
-  
-  // Parse the JSON data string
-  const walletData: WalletData = JSON.parse(response.data.data);
-  
-  return walletData;
-}
+// Create QueryClient with global cache configuration
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 30 * 1000, // 30 seconds - data is fresh for 30s
+      gcTime: 5 * 60 * 1000, // 5 minutes - keep in cache for 5 minutes
+      retry: 3,
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+      refetchOnWindowFocus: false, // Don't refetch on window focus
+      refetchInterval: 60 * 1000, // Auto-refetch every minute
+    },
+  },
+});
 
 interface WalletContextType {
   wallets: Array<{
@@ -27,6 +32,9 @@ interface WalletContextType {
   hasErrors: boolean;
   totalUsdValue: number;
   totalAlgoValue: number;
+  latestTransactions: SerializableTx[];
+  isTransactionsLoading: boolean;
+  transactionsError: Error | null;
 }
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
@@ -35,53 +43,23 @@ interface WalletProviderProps {
   children: React.ReactNode;
 }
 
-export function WalletProvider({ children }: WalletProviderProps) {
-  const [wallets, setWallets] = useState<Array<{
-    label: string;
-    address: string;
-    data?: WalletData;
-    isLoading: boolean;
-    error: Error | null;
-  }>>(() => 
-    project.wallets.map(wallet => ({
+// Inner provider that uses React Query hooks
+function WalletProviderInner({ children }: WalletProviderProps) {
+  // Use React Query hooks
+  const walletQueries = useWalletData();
+  const { latestTransactions, isLoading: isTransactionsLoading, error: transactionsError } = useAggregatedTransactions();
+
+  // Transform query results to match our interface
+  const wallets = project.wallets.map((wallet, index) => {
+    const query = walletQueries[index];
+    return {
       label: wallet.label,
       address: wallet.address,
-      data: undefined,
-      isLoading: true,
-      error: null,
-    }))
-  );
-
-  useEffect(() => {
-    // Fetch all wallet data
-    const fetchAllWallets = async () => {
-      const promises = project.wallets.map(async (wallet, index) => {
-        try {
-          const data = await fetchWalletInfo(wallet.address);
-          setWallets(prev => prev.map((w, i) => 
-            i === index 
-              ? { ...w, data, isLoading: false, error: null }
-              : w
-          ));
-        } catch (error) {
-          setWallets(prev => prev.map((w, i) => 
-            i === index 
-              ? { ...w, isLoading: false, error: error as Error }
-              : w
-          ));
-        }
-      });
-
-      await Promise.allSettled(promises);
+      data: query.data,
+      isLoading: query.isLoading,
+      error: query.error as Error | null,
     };
-
-    fetchAllWallets();
-
-    // Set up interval for refetching
-    const interval = setInterval(fetchAllWallets, 60 * 1000); // 1 minute
-
-    return () => clearInterval(interval);
-  }, []);
+  });
 
   // Calculate aggregate values
   const isAnyLoading = wallets.some(wallet => wallet.isLoading);
@@ -101,12 +79,24 @@ export function WalletProvider({ children }: WalletProviderProps) {
     hasErrors,
     totalUsdValue,
     totalAlgoValue,
+    latestTransactions,
+    isTransactionsLoading,
+    transactionsError,
   };
 
   return (
     <WalletContext.Provider value={contextValue}>
       {children}
     </WalletContext.Provider>
+  );
+}
+
+// Main provider that wraps with QueryClientProvider
+export function WalletProvider({ children }: WalletProviderProps) {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <WalletProviderInner>{children}</WalletProviderInner>
+    </QueryClientProvider>
   );
 }
 

@@ -5,9 +5,11 @@ export type Wallet = { label: string; address: string };
 export type Balance = { assetId: number; amount: bigint };
 
 export type NormalizedBalance = {
-  symbol: string;
+  symbol: string;        // original unit-name for logic/identification
+  displayName?: string;  // formatted name for display (e.g., "USDC/xUSD Pact LP")
   amount: number;        // humanized (decimals applied)
   usd?: number;          // optional fiat estimate
+  assetId?: number;      // ASA ID for logo lookup
 };
 
 export type Tx = {
