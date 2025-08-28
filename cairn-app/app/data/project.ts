@@ -2,23 +2,25 @@
 import { z } from "zod";
 
 export const AssetSchema = z.object({
-  id: z.number(),          // 0 = ALGO
-  symbol: z.string(),      // "ALGO", "xUSD", "COMPX"
-  decimals: z.number(),    // 6 for ALGO/xUSD/etc.
+  id: z.number(), // 0 = ALGO
+  symbol: z.string(), // "ALGO", "xUSD", "COMPX"
+  decimals: z.number(), // 6 for ALGO/xUSD/etc.
 });
 export const WalletSchema = z.object({
-  label: z.string(),       // "Treasury", "Ops", etc.
-  address: z.string(),     // Algorand address
+  label: z.string(), // "Treasury", "Ops", etc.
+  address: z.string(), // Algorand address
 });
 export const TeamSchema = z.object({
   name: z.string(),
   role: z.string(),
   photoUrl: z.string().optional(),
-  contacts: z.object({
-    x: z.string().url().optional(),
-    email: z.string().email().optional(),
-    site: z.string().url().optional(),
-  }).optional(),
+  contacts: z
+    .object({
+      x: z.string().url().optional(),
+      email: z.string().email().optional(),
+      site: z.string().url().optional(),
+    })
+    .optional(),
 });
 
 export const ProjectSchema = z.object({
@@ -37,23 +39,33 @@ const rawProject: Project = {
   slug: "compx",
   name: "CompX Transparency Dashboard",
   logoUrl: "/cairn-logo.png",
-  description: "Public, on-chain transparency dashboard for the CompX treasury.",
+  description:
+    "Public, on-chain transparency dashboard for the CompX treasury.",
   wallets: [
-    { label: "Treasury", address: "TREASURY_ADDR_XXXXXXXXXXXXXX" },
-    { label: "Ops",      address: "OPS_ADDR_XXXXXXXXXXXXXXXXXXX" },
-    { label: "Rewards",  address: "REWARDS_ADDR_XXXXXXXXXXXXXXX" },
+    {
+      label: "Treasury",
+      address: "HPD6ZADEDED6EIZ6HDGDJG4QQWVSEPUOKOPJD7BFTKUC7YFHHGFVYTW5QQ",
+    },
+    {
+      label: "Community Treasury",
+      address: "KPEZM2DSFHOOHG7RPDECCBTD6FRN2LPSSRJMMFVCFSIHGES4BXBJHPUBVQ",
+    },
+    {
+      label: "Reward Injector",
+      address: "RY773S3CRF5LVOD2KPKFV5P5MBX44MECMI3ESO4AG3B43JN5YEHASGZKCY",
+    },
   ],
   assets: [
-    { id: 0,           symbol: "ALGO",  decimals: 6 },
-    { id: 2994233666,  symbol: "xUSD",  decimals: 6 },
-    { id: 1234567890,  symbol: "COMPX", decimals: 6 }, // replace with real ASA id
+    { id: 0, symbol: "ALGO", decimals: 6 },
+    { id: 2994233666, symbol: "xUSD", decimals: 6 },
+    { id: 1234567890, symbol: "COMPX", decimals: 6 }, // replace with real ASA id
   ],
   team: [
     {
       name: "Kieran Nelson",
       role: "Founder",
       photoUrl: "/team/kieran.png",
-      contacts: { x: "https://x.com/xxiled1", email: "kieran@compx.io" }
+      contacts: { x: "https://x.com/xxiled1", email: "kieran@compx.io" },
     },
   ],
 };

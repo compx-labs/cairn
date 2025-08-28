@@ -1,22 +1,14 @@
 // app/routes/demo.tsx
-import { type LoaderFunctionArgs } from "react-router";
-import { useLoaderData } from "react-router";
-import { getTreasurySnapshot } from "~/models/treasury.server";
-import type { TreasurySnapshot } from "~/types/treasury";
 import { project } from "~/data/project";
 import { Section } from "~/components/Section";
 import { TotalsCard } from "~/components/TotalsCard";
 import { WalletCard } from "~/components/WalletCard";
-import { TransactionsTable } from "~/components/TransactionsTable";
 import { TeamCard } from "~/components/TeamCard";
 import { ThemeToggle } from "~/components/ThemeToggle";
+import { useWallets } from "~/contexts/WalletContext";
+import type { TreasurySnapshot, NormalizedBalance } from "~/types/treasury";
 
-export async function loader(_: LoaderFunctionArgs) {
-  const data = await getTreasurySnapshot();
-  return Response.json(data, {
-    headers: { "Cache-Control": "public, max-age=30, s-maxage=60" },
-  });
-}
+
 
 export function meta() {
   return [
@@ -26,7 +18,82 @@ export function meta() {
 }
 
 export default function Demo() {
-  const snapshot = useLoaderData<TreasurySnapshot>();
+  const { wallets, isAnyLoading, hasErrors, totalUsdValue } = useWallets();
+
+  // Transform wallet context data to TreasurySnapshot format
+  const transformedWallets = wallets.map(wallet => {
+    if (!wallet.data) {
+      return {
+        label: wallet.label,
+        address: wallet.address,
+        balances: [] as NormalizedBalance[],
+        lastUpdated: new Date().toISOString(),
+      };
+    }
+
+    // Transform assets to normalized balances
+    const balances: NormalizedBalance[] = wallet.data.assets
+      .filter(asset => asset.amount > 0) // Only show assets with positive balance
+      .map(asset => {
+        // Apply decimals to get human-readable amount
+        const humanAmount = asset.amount / Math.pow(10, asset.decimals);
+        
+        return {
+          symbol: asset["unit-name"] || `Asset ${asset["asset-id"]}`,
+          amount: humanAmount,
+          usd: asset.value, // The API already provides USD value
+        };
+      })
+      .sort((a, b) => (b.usd || b.amount) - (a.usd || a.amount)); // Sort by USD value, then amount
+
+    return {
+      label: wallet.label,
+      address: wallet.address,
+      balances,
+      lastUpdated: new Date().toISOString(),
+    };
+  });
+
+  // Calculate totals across all wallets
+  const totals: Record<string, number> = {};
+  transformedWallets.forEach(wallet => {
+    wallet.balances.forEach(balance => {
+      totals[balance.symbol] = (totals[balance.symbol] || 0) + balance.amount;
+    });
+  });
+
+  // Create TreasurySnapshot-compatible object
+  const snapshot: TreasurySnapshot = {
+    totals,
+    fiatTotals: { USD: totalUsdValue },
+    wallets: transformedWallets,
+    latestTxs: [], // Empty for now as requested
+    lastUpdated: new Date().toISOString(),
+  };
+
+  // Show loading state
+  if (isAnyLoading) {
+    return (
+      <div className="min-h-screen bg-bg dark:bg-dark-bg transition-colors duration-200 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-lg font-semibold text-ink-700 dark:text-dark-text mb-2">Loading treasury data...</div>
+          <div className="text-ink-500 dark:text-dark-text-muted">Fetching wallet information from the blockchain</div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (hasErrors) {
+    return (
+      <div className="min-h-screen bg-bg dark:bg-dark-bg transition-colors duration-200 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-lg font-semibold text-red-600 dark:text-red-400 mb-2">Error loading treasury data</div>
+          <div className="text-ink-500 dark:text-dark-text-muted">Please try refreshing the page</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-bg dark:bg-dark-bg transition-colors duration-200">
@@ -67,9 +134,13 @@ export default function Demo() {
             </div>
           </Section>
 
-          {/* Recent Transactions */}
+          {/* Recent Transactions - Coming Soon */}
           <Section title="Recent Transactions">
-            <TransactionsTable transactions={snapshot.latestTxs} />
+            <div className="bg-white dark:bg-dark-surface rounded-xl border border-line dark:border-dark-border p-8 shadow-sm transition-colors duration-200 text-center">
+              <div className="text-ink-500 dark:text-dark-text-muted">
+                Transaction history coming soon...
+              </div>
+            </div>
           </Section>
 
           {/* Team */}

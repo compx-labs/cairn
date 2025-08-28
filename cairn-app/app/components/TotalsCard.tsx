@@ -17,18 +17,7 @@ export function TotalsCard({ snapshot }: TotalsCardProps) {
         </span>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {Object.entries(totals).map(([symbol, amount]) => (
-          <div key={symbol} className="text-center">
-            <div className="text-2xl font-bold text-ink-700 dark:text-dark-text transition-colors duration-200">
-              {amount.toLocaleString(undefined, { 
-                maximumFractionDigits: symbol === 'COMPX' ? 0 : 2 
-              })}
-            </div>
-            <div className="text-sm font-medium text-ink-500 dark:text-dark-text-muted transition-colors duration-200">{symbol}</div>
-          </div>
-        ))}
-      </div>
+
 
       {fiatTotals && (
         <div className="mt-6 pt-4 border-t border-line dark:border-dark-border transition-colors duration-200">
