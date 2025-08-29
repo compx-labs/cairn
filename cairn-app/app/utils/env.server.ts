@@ -6,6 +6,7 @@ const EnvSchema = z.object({
   ALGOD_INDEXER_URL: z.string().optional(),
   ALGOD_INDEXER_TOKEN: z.string().optional(),
   COMPX_GENERAL_BACKEND_URL: z.string().optional(),
+  APTOS_API_KEY: z.string().optional(),
 });
 
 const parsed = EnvSchema.parse(process.env);
@@ -14,4 +15,5 @@ export const env = {
   ALGOD_INDEXER_URL: parsed.ALGOD_INDEXER_URL,
   ALGOD_INDEXER_TOKEN: parsed.ALGOD_INDEXER_TOKEN,
   COMPX_GENERAL_BACKEND_URL: parsed.COMPX_GENERAL_BACKEND_URL,
+  APTOS_API_KEY: parsed.APTOS_API_KEY,
 };

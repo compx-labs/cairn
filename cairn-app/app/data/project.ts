@@ -9,6 +9,7 @@ export const AssetSchema = z.object({
 export const WalletSchema = z.object({
   label: z.string(), // "Treasury", "Ops", etc.
   address: z.string(), // Algorand address
+  network: z.string(), // "algorand", "ethereum", etc.
 });
 export const TeamSchema = z.object({
   name: z.string(),
@@ -44,15 +45,23 @@ const rawProject: Project = {
   wallets: [
     {
       label: "Treasury",
+      network: "algorand",
       address: "HPD6ZADEDED6EIZ6HDGDJG4QQWVSEPUOKOPJD7BFTKUC7YFHHGFVYTW5QQ",
     },
     {
       label: "Community Treasury",
+      network: "algorand",
       address: "KPEZM2DSFHOOHG7RPDECCBTD6FRN2LPSSRJMMFVCFSIHGES4BXBJHPUBVQ",
     },
     {
       label: "Reward Injector",
+      network: "algorand",
       address: "RY773S3CRF5LVOD2KPKFV5P5MBX44MECMI3ESO4AG3B43JN5YEHASGZKCY",
+    },
+    {
+      label: "Aptos Treasury",
+      network: "aptos",
+      address: "0x5b1276d4f54e6919c4356adfe7f89bd72934894b6cc00e95607b8594abf9e912",
     },
   ],
   assets: [

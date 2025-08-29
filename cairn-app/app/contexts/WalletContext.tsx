@@ -2,9 +2,10 @@
 import React, { createContext, useContext } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { project } from "~/data/project";
-import { useWalletData, useAggregatedTransactions } from "~/hooks/useWalletQueries";
+import { useMultiNetworkWalletData, useAggregatedTransactions } from "~/hooks/useWalletQueries";
 import type { WalletData } from "~/types/wallet";
 import type { SerializableTx } from "~/types/treasury";
+import type { MultiNetworkWalletData } from "~/types/aptos";
 
 // Create QueryClient with global cache configuration
 const queryClient = new QueryClient({
@@ -24,7 +25,8 @@ interface WalletContextType {
   wallets: Array<{
     label: string;
     address: string;
-    data?: WalletData;
+    network: string;
+    data?: MultiNetworkWalletData;
     isLoading: boolean;
     error: Error | null;
   }>;
@@ -46,7 +48,7 @@ interface WalletProviderProps {
 // Inner provider that uses React Query hooks
 function WalletProviderInner({ children }: WalletProviderProps) {
   // Use React Query hooks
-  const walletQueries = useWalletData();
+  const walletQueries = useMultiNetworkWalletData();
   const { latestTransactions, isLoading: isTransactionsLoading, error: transactionsError } = useAggregatedTransactions();
 
   // Transform query results to match our interface
@@ -55,6 +57,7 @@ function WalletProviderInner({ children }: WalletProviderProps) {
     return {
       label: wallet.label,
       address: wallet.address,
+      network: wallet.network,
       data: query.data,
       isLoading: query.isLoading,
       error: query.error as Error | null,
@@ -66,11 +69,16 @@ function WalletProviderInner({ children }: WalletProviderProps) {
   const hasErrors = wallets.some(wallet => wallet.error !== null);
   
   const totalUsdValue = wallets.reduce((sum, wallet) => {
-    return sum + (wallet.data?.stats.usd || 0);
+    return sum + (wallet.data?.totalUsd || 0);
   }, 0);
   
   const totalAlgoValue = wallets.reduce((sum, wallet) => {
-    return sum + (wallet.data?.stats.algo || 0);
+    // Only count ALGO from Algorand wallets
+    if (wallet.network === "algorand" && wallet.data) {
+      const algoBalance = wallet.data.balances.find(b => b.assetId === 0);
+      return sum + (algoBalance?.amount || 0);
+    }
+    return sum;
   }, 0);
 
   const contextValue: WalletContextType = {
