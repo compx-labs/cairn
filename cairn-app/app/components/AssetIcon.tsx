@@ -24,17 +24,18 @@ export function AssetIcon({ assetId, symbol, size = "md", className = "" }: Asse
   const isLpToken = symbol === "PLP" || symbol === "TMPOOL2" || symbol.toLowerCase().includes("tinyman") 
   
   if (isLpToken) {
-    // Get LP token info from wallet assets data (LP tokens won't be in ASA metadata)
-    let lpTokenAsset = null;
+    // Get LP token info from wallet balances data (LP tokens won't be in ASA metadata)
+    let lpTokenBalance = null;
     for (const wallet of wallets) {
-      if (wallet.data?.assets) {
-        lpTokenAsset = wallet.data.assets.find(asset => asset["asset-id"] === Number(assetId));
-        if (lpTokenAsset) break;
+      if (wallet.data?.balances) {
+        lpTokenBalance = wallet.data.balances.find(balance => 
+          balance.assetId === Number(assetId) || balance.symbol === symbol
+        );
+        if (lpTokenBalance) break;
       }
     }
     
-    console.log('LP Token Asset from wallet:', lpTokenAsset);
-    const lpTokenPair = parseLPTokenName(lpTokenAsset?.name || "");
+    const lpTokenPair = parseLPTokenName(lpTokenBalance?.displayName || lpTokenBalance?.symbol || "");
     
     if (lpTokenPair) {
       return <LPTokenIcon pair={lpTokenPair} size={size} className={className} />;
@@ -106,7 +107,6 @@ function parseLPTokenName(name: string): LPTokenPair | null {
   // Generic: "ALGO/USDC Tinyman LP" or "TOKEN1/TOKEN2 LP"
   
   // Try Tinyman format first: "TinymanPool2.0 TOKEN1-TOKEN2"
-  console.log('token name', name);
   const tinymanPattern = /TinymanPool2\.0\s+([A-Z0-9]+)-([A-Z0-9]+)/i;
   const tinymanMatch = name.match(tinymanPattern);
   

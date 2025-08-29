@@ -78,25 +78,23 @@ export default function Demo() {
       };
     }
 
-    // Transform assets to normalized balances
-    const balances: NormalizedBalance[] = wallet.data.assets
-      .filter(asset => asset.amount > 0) // Only show assets with positive balance
-      .map(asset => {
-        // Apply decimals to get human-readable amount
-        const humanAmount = asset.amount / Math.pow(10, asset.decimals);
-        
-        const originalSymbol = asset["unit-name"] || `Asset ${asset["asset-id"]}`;
-        const formattedName = formatLPTokenName(originalSymbol, asset.name || "");
-        
-        // Use the price from wallet asset data to calculate USD value
-        const usdValue = asset.price ? humanAmount * asset.price : undefined;
+    // Transform balances to normalized format
+    const balances: NormalizedBalance[] = wallet.data.balances
+      .filter(balance => balance.amount > 0) // Only show assets with positive balance
+      .map(balance => {
+        // For Algorand assets, format LP token names
+        let displayName = balance.displayName;
+        if (wallet.network === "algorand" && balance.symbol) {
+          const formattedName = formatLPTokenName(balance.symbol, balance.displayName || "");
+          displayName = formattedName !== balance.symbol ? formattedName : undefined;
+        }
         
         return {
-          symbol: originalSymbol, // Keep original unit-name for logic
-          displayName: formattedName !== originalSymbol ? formattedName : undefined, // Only set if different
-          amount: humanAmount,
-          usd: usdValue, // Use pricing context instead of wallet API value
-          assetId: asset["asset-id"], // Include asset ID for ASA logos
+          symbol: balance.symbol,
+          displayName,
+          amount: balance.amount,
+          usd: balance.usd,
+          assetId: balance.assetId, // For Algorand ASA logos
         };
       })
       .sort((a, b) => (b.usd || b.amount) - (a.usd || a.amount)); // Sort by USD value, then amount
@@ -105,7 +103,7 @@ export default function Demo() {
       label: wallet.label,
       address: wallet.address,
       balances,
-      lastUpdated: new Date().toISOString(),
+      lastUpdated: wallet.data.lastUpdated,
     };
   });
 
@@ -184,6 +182,7 @@ export default function Demo() {
                     isLoading={contextWallet.isLoading}
                     label={contextWallet.label}
                     address={contextWallet.address}
+                    network={contextWallet.network}
                   />
                 );
               })}
