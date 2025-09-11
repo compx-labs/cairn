@@ -1,4 +1,5 @@
 // app/components/WalletCard.tsx
+import { useNavigate } from "react-router";
 import type { TreasurySnapshot } from "~/types/treasury";
 import type { MultiNetworkWalletData } from "~/types/aptos";
 import { CopyButton } from "./CopyButton";
@@ -42,6 +43,7 @@ function getNetworkInfo(network?: string) {
 }
 
 export function WalletCard({ wallet, isLoading = false, label: fallbackLabel, address: fallbackAddress, network: fallbackNetwork }: WalletCardProps) {
+  const navigate = useNavigate();
   if (isLoading || !wallet) {
     return (
       <SkeletonCard>
@@ -86,8 +88,15 @@ export function WalletCard({ wallet, isLoading = false, label: fallbackLabel, ad
   
   const networkInfo = getNetworkInfo(network);
 
+  const handleCardClick = () => {
+    navigate(`/wallet/${address}`);
+  };
+
   return (
-    <div className="bg-white dark:bg-dark-surface rounded-xl border border-line dark:border-dark-border p-6 shadow-sm hover:shadow-md transition-all duration-200">
+    <div 
+      className="bg-white dark:bg-dark-surface rounded-xl border border-line dark:border-dark-border p-6 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
+      onClick={handleCardClick}
+    >
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-lg font-semibold text-ink-700 dark:text-dark-text font-heading transition-colors duration-200">{label}</h3>
@@ -114,8 +123,12 @@ export function WalletCard({ wallet, isLoading = false, label: fallbackLabel, ad
       <div className="mb-4">
         <div className="flex items-center gap-2 text-sm text-ink-500 dark:text-dark-text-muted mb-2 transition-colors duration-200">
           <span className="font-mono">{address.slice(0, 8)}...{address.slice(-8)}</span>
-          <CopyButton text={address} />
-          <ExplorerButton address={address} network={network} />
+          <div onClick={(e) => e.stopPropagation()}>
+            <CopyButton text={address} />
+          </div>
+          <div onClick={(e) => e.stopPropagation()}>
+            <ExplorerButton address={address} network={network} />
+          </div>
         </div>
         {totalUSD > 0 && (
           <div className="text-lg font-semibold text-brand-600 transition-colors duration-200">

@@ -98,7 +98,7 @@ function transformAlgorandWalletData(walletData: WalletData, wallet: { label: st
     amount: asset.balance,
     assetId: asset["asset-id"],
     usd: asset.value,
-    displayName: asset.name || asset["unit-name"],
+    displayName: asset.name, // Use full asset name for LP token parsing
   }));
 
   return {
