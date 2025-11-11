@@ -46,8 +46,9 @@ export default {
         'dark-text-subtle': '#64748b',
       },
       fontFamily: {
-        heading: ['Outfit', 'sans-serif'],
-        sans: ['Inter', 'sans-serif'],
+        sans: ['Space Mono', 'monospace'],
+        mono: ['Space Mono', 'monospace'],
+        heading: ['Space Mono', 'monospace'],
       },
     },
   },

@@ -146,7 +146,7 @@ function DemoSection() {
                 className="h-12 w-12 rounded-full"
               />
               <div>
-                <h1 className="text-3xl font-bold text-ink-700 dark:text-dark-text font-heading transition-colors duration-200">{project.name}</h1>
+                <h1 className="text-3xl font-bold text-ink-700 dark:text-dark-text  transition-colors duration-200">{project.name}</h1>
                 <p className="text-ink-500 dark:text-dark-text-muted mt-1 transition-colors duration-200">{project.description}</p>
               </div>
             </div>
@@ -255,7 +255,7 @@ function LandingPage({ onViewDemo }: { onViewDemo: () => void }) {
               <div className="w-2 h-2 bg-brand-500 rounded-full animate-pulse" />
               Web3 Transparency Dashboard
             </div>
-            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-ink-800 dark:text-dark-text font-heading">
+            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-ink-800 dark:text-dark-text ">
               Show your community exactly where the money goes
             </h1>
             <p className="mt-6 text-lg text-ink-500 dark:text-dark-text-muted max-w-prose">
@@ -318,7 +318,7 @@ function LandingPage({ onViewDemo }: { onViewDemo: () => void }) {
       <section id="problem" className="py-16 bg-ink-50 dark:bg-dark-surface/50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-ink-800 dark:text-dark-text font-heading mb-6">
+            <h2 className="text-3xl font-bold text-ink-800 dark:text-dark-text  mb-6">
               Web3 projects struggle with transparency
             </h2>
             <p className="text-lg text-ink-500 dark:text-dark-text-muted mb-12">
@@ -363,7 +363,7 @@ function LandingPage({ onViewDemo }: { onViewDemo: () => void }) {
       <section id="features" className="py-20">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-ink-800 dark:text-dark-text font-heading mb-4">
+            <h2 className="text-3xl font-bold text-ink-800 dark:text-dark-text  mb-4">
               Cairn makes transparency simple
             </h2>
             <p className="text-lg text-ink-500 dark:text-dark-text-muted max-w-2xl mx-auto">
@@ -454,7 +454,7 @@ function LandingPage({ onViewDemo }: { onViewDemo: () => void }) {
       <section className="py-20 bg-ink-50 dark:bg-dark-surface/50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-ink-800 dark:text-dark-text font-heading mb-4">
+            <h2 className="text-3xl font-bold text-ink-800 dark:text-dark-text  mb-4">
               How Cairn works
             </h2>
             <p className="text-lg text-ink-500 dark:text-dark-text-muted max-w-2xl mx-auto">
@@ -506,7 +506,7 @@ function LandingPage({ onViewDemo }: { onViewDemo: () => void }) {
                 <div className="w-2 h-2 bg-brand-500 rounded-full" />
                 Live Demo
               </div>
-              <h3 className="text-3xl font-bold text-ink-800 dark:text-dark-text font-heading mb-4">
+              <h3 className="text-3xl font-bold text-ink-800 dark:text-dark-text  mb-4">
                 See Cairn in action
               </h3>
               <p className="text-lg text-ink-500 dark:text-dark-text-muted mb-8">
@@ -583,7 +583,7 @@ function LandingPage({ onViewDemo }: { onViewDemo: () => void }) {
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-brand-500 to-brand-600 text-white">
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold font-heading mb-6">
+          <h2 className="text-3xl md:text-4xl font-bold  mb-6">
             Ready to show your community where the money goes?
           </h2>
           <p className="text-xl text-brand-100 mb-8 max-w-2xl mx-auto">

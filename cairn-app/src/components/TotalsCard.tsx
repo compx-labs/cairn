@@ -40,7 +40,7 @@ export function TotalsCard({ snapshot, isLoading = false }: TotalsCardProps) {
   return (
     <div className="bg-white dark:bg-dark-surface rounded-xl border border-line dark:border-dark-border p-6 shadow-sm transition-colors duration-200">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-ink-700 dark:text-dark-text font-heading transition-colors duration-200">Treasury Totals</h3>
+        <h3 className="text-lg font-semibold text-ink-700 dark:text-dark-text  transition-colors duration-200">Treasury Totals</h3>
         <span className="text-sm text-ink-400 dark:text-dark-text-subtle transition-colors duration-200">
           Updated {new Date(lastUpdated).toLocaleTimeString()}
         </span>

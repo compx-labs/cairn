@@ -100,22 +100,22 @@ export function TransactionsTable({ transactions = [], isLoading = false }: Tran
           <table className="w-full">
             <thead className="bg-ink-50 dark:bg-dark-border border-b border-line dark:border-dark-border transition-colors duration-200">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-ink-500 dark:text-dark-text-muted uppercase tracking-wider font-heading transition-colors duration-200">
+                <th className="px-6 py-3 text-left text-xs font-medium text-ink-500 dark:text-dark-text-muted uppercase tracking-wider  transition-colors duration-200">
                   Time
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-ink-500 dark:text-dark-text-muted uppercase tracking-wider font-heading transition-colors duration-200">
+                <th className="px-6 py-3 text-left text-xs font-medium text-ink-500 dark:text-dark-text-muted uppercase tracking-wider  transition-colors duration-200">
                   Wallet
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-ink-500 dark:text-dark-text-muted uppercase tracking-wider font-heading transition-colors duration-200">
+                <th className="px-6 py-3 text-left text-xs font-medium text-ink-500 dark:text-dark-text-muted uppercase tracking-wider  transition-colors duration-200">
                   Direction
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-ink-500 dark:text-dark-text-muted uppercase tracking-wider font-heading transition-colors duration-200">
+                <th className="px-6 py-3 text-left text-xs font-medium text-ink-500 dark:text-dark-text-muted uppercase tracking-wider  transition-colors duration-200">
                   Amount
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-ink-500 dark:text-dark-text-muted uppercase tracking-wider font-heading transition-colors duration-200">
+                <th className="px-6 py-3 text-left text-xs font-medium text-ink-500 dark:text-dark-text-muted uppercase tracking-wider  transition-colors duration-200">
                   Asset
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-ink-500 dark:text-dark-text-muted uppercase tracking-wider font-heading transition-colors duration-200">
+                <th className="px-6 py-3 text-left text-xs font-medium text-ink-500 dark:text-dark-text-muted uppercase tracking-wider  transition-colors duration-200">
                   Explorer
                 </th>
               </tr>
@@ -165,22 +165,22 @@ export function TransactionsTable({ transactions = [], isLoading = false }: Tran
         <table className="w-full">
           <thead className="bg-ink-50 dark:bg-dark-border border-b border-line dark:border-dark-border transition-colors duration-200">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-ink-500 dark:text-dark-text-muted uppercase tracking-wider font-heading transition-colors duration-200">
+              <th className="px-6 py-3 text-left text-xs font-medium text-ink-500 dark:text-dark-text-muted uppercase tracking-wider  transition-colors duration-200">
                 Time
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-ink-500 dark:text-dark-text-muted uppercase tracking-wider font-heading transition-colors duration-200">
+              <th className="px-6 py-3 text-left text-xs font-medium text-ink-500 dark:text-dark-text-muted uppercase tracking-wider  transition-colors duration-200">
                 Wallet
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-ink-500 dark:text-dark-text-muted uppercase tracking-wider font-heading transition-colors duration-200">
+              <th className="px-6 py-3 text-left text-xs font-medium text-ink-500 dark:text-dark-text-muted uppercase tracking-wider  transition-colors duration-200">
                 Direction
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-ink-500 dark:text-dark-text-muted uppercase tracking-wider font-heading transition-colors duration-200">
+              <th className="px-6 py-3 text-left text-xs font-medium text-ink-500 dark:text-dark-text-muted uppercase tracking-wider  transition-colors duration-200">
                 Amount
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-ink-500 dark:text-dark-text-muted uppercase tracking-wider font-heading transition-colors duration-200">
+              <th className="px-6 py-3 text-left text-xs font-medium text-ink-500 dark:text-dark-text-muted uppercase tracking-wider  transition-colors duration-200">
                 Asset
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-ink-500 dark:text-dark-text-muted uppercase tracking-wider font-heading transition-colors duration-200">
+              <th className="px-6 py-3 text-left text-xs font-medium text-ink-500 dark:text-dark-text-muted uppercase tracking-wider  transition-colors duration-200">
                 Explorer
               </th>
             </tr>

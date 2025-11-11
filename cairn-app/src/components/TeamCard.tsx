@@ -4,7 +4,7 @@ import { project } from "../data/project";
 export function TeamCard() {
   return (
     <div className="bg-white dark:bg-dark-surface rounded-xl border border-line dark:border-dark-border p-6 shadow-sm transition-colors duration-200">
-      <h3 className="text-lg font-semibold text-ink-700 dark:text-dark-text font-heading mb-6 transition-colors duration-200">Team</h3>
+      <h3 className="text-lg font-semibold text-ink-700 dark:text-dark-text  mb-6 transition-colors duration-200">Team</h3>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {project.team.map((member, idx) => (

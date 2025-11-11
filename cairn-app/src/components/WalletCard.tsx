@@ -92,7 +92,7 @@ export function WalletCard({ wallet, isLoading = false, label: fallbackLabel, ad
     >
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-lg font-semibold text-ink-700 dark:text-dark-text font-heading transition-colors duration-200">{label}</h3>
+          <h3 className="text-lg font-semibold text-ink-700 dark:text-dark-text  transition-colors duration-200">{label}</h3>
           <span className="text-sm text-ink-400 dark:text-dark-text-subtle transition-colors duration-200">
             Updated {new Date(lastUpdated).toLocaleTimeString()}
           </span>
