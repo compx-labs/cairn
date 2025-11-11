@@ -1,5 +1,5 @@
-// app/components/TotalsCard.tsx
-import type { TreasurySnapshot } from "~/types/treasury";
+// src/components/TotalsCard.tsx
+import type { TreasurySnapshot } from "../types/treasury";
 import { SkeletonCard, SkeletonTitle, SkeletonText } from "./Skeleton";
 
 interface TotalsCardProps {

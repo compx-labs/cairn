@@ -1,11 +1,11 @@
-// app/components/TransactionsTable.tsx
-import type { SerializableTx } from "~/types/treasury";
-import { project } from "~/data/project";
+// src/components/TransactionsTable.tsx
+import type { SerializableTx } from "../types/treasury";
+import { project } from "../data/project";
 import { ExplorerButton } from "./ExplorerButton";
 import { SkeletonText } from "./Skeleton";
 import { AssetIcon } from "./AssetIcon";
-import { useWallets } from "~/contexts/WalletContext";
-import { useAsa } from "~/contexts/AsaContext";
+import { useWallets } from "../contexts/WalletContext";
+import { useAsa } from "../contexts/AsaContext";
 
 interface TransactionsTableProps {
   transactions?: SerializableTx[];

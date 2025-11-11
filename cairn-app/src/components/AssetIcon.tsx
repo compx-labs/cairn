@@ -1,6 +1,6 @@
 // app/components/AssetIcon.tsx
 import { useState } from "react";
-import { useAsa } from "~/contexts/AsaContext";
+import { useAsa } from "../contexts/AsaContext";
 
 interface AssetIconProps {
   assetId: number | string;

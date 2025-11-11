@@ -1,20 +1,227 @@
-// app/routes/_index.tsx
-import { Link } from "react-router";
-import { project } from "~/data/project";
-import { ThemeToggle } from "~/components/ThemeToggle";
+import React, { useState } from 'react';
+import { project } from './data/project';
+import { Section } from './components/Section';
+import { TotalsCard } from './components/TotalsCard';
+import { WalletCard } from './components/WalletCard';
+import { TransactionsTable } from './components/TransactionsTable';
+import { TeamCard } from './components/TeamCard';
+import { ThemeToggle } from './components/ThemeToggle';
+import { ThemeProvider } from './contexts/ThemeContext';
+import { WalletProvider, useWallets } from './contexts/WalletContext';
+import { AsaProvider } from './contexts/AsaContext';
+import type { TreasurySnapshot, NormalizedBalance } from './types/treasury';
 
-export function meta() {
-  return [
-    { title: `Cairn - Guiding clarity on-chain` },
-    {
-      name: "description",
-      content:
-        "Give your community clear, verifiable insight into your Web3 treasury. Every balance and transaction links back to the blockchain.",
-    },
-  ];
+// Helper function to format LP token names
+function formatLPTokenName(unitName: string, fullName: string): string {
+  // Check if it's an LP token
+  const isLpToken = unitName === "PLP" || unitName === "TMPOOL2" || unitName.toLowerCase().includes("tinyman");
+  
+  if (!isLpToken) {
+    return unitName;
+  }
+
+  // Parse the full name to extract token pairs
+  let tokenPair = null;
+  let dexName = "";
+
+  // Try Tinyman format: "TinymanPool2.0 USDC-ALGO"
+  const tinymanMatch = fullName.match(/TinymanPool2\.0\s+([A-Z0-9]+)-([A-Z0-9]+)/i);
+  if (tinymanMatch) {
+    tokenPair = { token1: tinymanMatch[1], token2: tinymanMatch[2] };
+    dexName = "Tinyman LP";
+  }
+
+  // Try PACT format: "USDC/xUSD [SI] PACT LP TKN"
+  if (!tokenPair) {
+    const pactMatch = fullName.match(/([A-Z0-9]+)\/([A-Z0-9]+)/i);
+    if (pactMatch) {
+      tokenPair = { token1: pactMatch[1], token2: pactMatch[2] };
+      dexName = "Pact LP";
+    }
+  }
+
+  // Try generic dash format
+  if (!tokenPair) {
+    const dashMatch = fullName.match(/([A-Z0-9]+)-([A-Z0-9]+)/i);
+    if (dashMatch) {
+      tokenPair = { token1: dashMatch[1], token2: dashMatch[2] };
+      dexName = "LP";
+    }
+  }
+
+  // Return formatted name or fallback to unit name
+  if (tokenPair) {
+    return `${tokenPair.token1}/${tokenPair.token2} ${dexName}`;
+  }
+
+  return unitName;
 }
 
-export default function Index() {
+function DemoSection() {
+  const { wallets, isAnyLoading, hasErrors, latestTransactions, isTransactionsLoading } = useWallets();
+
+  // Transform wallet context data to TreasurySnapshot format
+  const transformedWallets = wallets.map(wallet => {
+    if (!wallet.data) {
+      return {
+        label: wallet.label,
+        address: wallet.address,
+        balances: [] as NormalizedBalance[],
+        lastUpdated: new Date().toISOString(),
+      };
+    }
+
+    // Transform balances to normalized format
+    const balances: NormalizedBalance[] = wallet.data.balances
+      .filter(balance => balance.amount > 0) // Only show assets with positive balance
+      .map(balance => {
+        // For Algorand assets, format LP token names
+        let displayName = balance.displayName;
+        if (wallet.network === "algorand" && balance.symbol) {
+          const formattedName = formatLPTokenName(balance.symbol, balance.displayName || "");
+          displayName = formattedName !== balance.symbol ? formattedName : undefined;
+        }
+        
+        return {
+          symbol: balance.symbol,
+          displayName,
+          amount: balance.amount,
+          usd: balance.usd,
+          assetId: balance.assetId, // For Algorand ASA logos
+        };
+      })
+      .sort((a, b) => (b.usd || b.amount) - (a.usd || a.amount)); // Sort by USD value, then amount
+
+    return {
+      label: wallet.label,
+      address: wallet.address,
+      balances,
+      lastUpdated: wallet.data.lastUpdated,
+    };
+  });
+
+  // Calculate totals across all wallets
+  const totals: Record<string, number> = {};
+  let totalUsdValue = 0;
+  
+  transformedWallets.forEach(wallet => {
+    wallet.balances.forEach(balance => {
+      totals[balance.symbol] = (totals[balance.symbol] || 0) + balance.amount;
+      totalUsdValue += balance.usd || 0;
+    });
+  });
+
+  // Create TreasurySnapshot-compatible object
+  const snapshot: TreasurySnapshot = {
+    totals,
+    fiatTotals: { USD: totalUsdValue },
+    wallets: transformedWallets,
+    latestTxs: latestTransactions,
+    lastUpdated: new Date().toISOString(),
+  };
+
+  // Show error state only if all wallets failed
+  const allWalletsFailed = wallets.length > 0 && wallets.every(wallet => wallet.error !== null);
+  if (allWalletsFailed) {
+    return (
+      <div className="min-h-screen bg-bg dark:bg-dark-bg transition-colors duration-200 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-lg font-semibold text-red-600 dark:text-red-400 mb-2">Error loading treasury data</div>
+          <div className="text-ink-500 dark:text-dark-text-muted">Please try refreshing the page</div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-bg dark:bg-dark-bg transition-colors duration-200">
+      {/* Header */}
+      <header className="bg-white dark:bg-dark-surface border-b border-line dark:border-dark-border transition-colors duration-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <img
+                src={project.logoUrl}
+                alt={project.name}
+                className="h-12 w-12 rounded-full"
+              />
+              <div>
+                <h1 className="text-3xl font-bold text-ink-700 dark:text-dark-text font-heading transition-colors duration-200">{project.name}</h1>
+                <p className="text-ink-500 dark:text-dark-text-muted mt-1 transition-colors duration-200">{project.description}</p>
+              </div>
+            </div>
+            <ThemeToggle />
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="space-y-8">
+          {/* Treasury Overview */}
+          <Section title="Treasury Overview">
+            <TotalsCard snapshot={isAnyLoading ? undefined : snapshot} isLoading={isAnyLoading} />
+          </Section>
+
+          {/* Wallet Breakdown */}
+          <Section title="Wallet Breakdown">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {wallets.map((contextWallet, idx) => {
+                const transformedWallet = transformedWallets[idx];
+                return (
+                  <WalletCard 
+                    key={idx} 
+                    wallet={contextWallet.isLoading ? undefined : transformedWallet}
+                    isLoading={contextWallet.isLoading}
+                    label={contextWallet.label}
+                    address={contextWallet.address}
+                    network={contextWallet.network}
+                  />
+                );
+              })}
+            </div>
+          </Section>
+
+          {/* Recent Transactions */}
+          <Section title="Recent Transactions">
+            <TransactionsTable 
+              transactions={isTransactionsLoading ? undefined : snapshot.latestTxs} 
+              isLoading={isTransactionsLoading} 
+            />
+          </Section>
+
+          {/* Team */}
+          <Section title="Team">
+            <TeamCard />
+          </Section>
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-white dark:bg-dark-surface border-t border-line dark:border-dark-border mt-16 transition-colors duration-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <img
+                src={project.logoUrl}
+                alt="Cairn"
+                className="h-6 w-6"
+              />
+              <span className="text-sm text-ink-500 dark:text-dark-text-muted transition-colors duration-200">
+                Powered by Cairn - Transparency through verification
+              </span>
+            </div>
+            <div className="text-sm text-ink-400 dark:text-dark-text-subtle transition-colors duration-200">
+              Last updated: {new Date(snapshot.lastUpdated).toLocaleString()}
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+function LandingPage({ onViewDemo }: { onViewDemo: () => void }) {
   return (
     <div className="min-h-screen bg-bg dark:bg-dark-bg transition-colors duration-200">
       {/* Header */}
@@ -28,12 +235,12 @@ export default function Index() {
             />
           </div>
           <div className="flex items-center gap-3">
-            <Link
-              to="/demo"
+            <button
+              onClick={onViewDemo}
               className="hidden sm:inline-flex px-4 py-2 rounded-lg bg-brand-500 text-ink-800 hover:bg-brand-600 transition-colors duration-200"
             >
               See Demo
-            </Link>
+            </button>
             <ThemeToggle />
           </div>
         </div>
@@ -58,8 +265,8 @@ export default function Index() {
               blockchain.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                to="/demo"
+              <button
+                onClick={onViewDemo}
                 className="inline-flex items-center px-6 py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-ink-800 font-semibold transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-brand-500/25"
               >
                 View Live Demo
@@ -76,7 +283,7 @@ export default function Index() {
                     d="M13 7l5 5m0 0l-5 5m5-5H6"
                   />
                 </svg>
-              </Link>
+              </button>
               <a
                 href="#problem"
                 className="inline-flex items-center px-6 py-3 rounded-xl border border-line dark:border-dark-border text-ink-700 dark:text-dark-text hover:bg-ink-50 dark:hover:bg-dark-border transition-colors duration-200"
@@ -334,8 +541,8 @@ export default function Index() {
                   </div>
                 ))}
               </div>
-              <Link
-                to="/demo"
+              <button
+                onClick={onViewDemo}
                 className="inline-flex items-center px-6 py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-ink-800 font-semibold transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-brand-500/25"
               >
                 Explore the Demo
@@ -352,7 +559,7 @@ export default function Index() {
                     d="M13 7l5 5m0 0l-5 5m5-5H6"
                   />
                 </svg>
-              </Link>
+              </button>
             </div>
             <div className="relative">
               <div className="rounded-2xl bg-white dark:bg-dark-surface border border-line dark:border-dark-border shadow-2xl overflow-hidden">
@@ -384,8 +591,8 @@ export default function Index() {
             our live demo, then get in touch to set up your own dashboard.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Link
-              to="/demo"
+            <button
+              onClick={onViewDemo}
               className="inline-flex items-center px-8 py-4 rounded-xl bg-white text-ink-800 font-semibold hover:bg-brand-50 transition-all duration-200 hover:scale-105 shadow-lg"
             >
               View Demo Project
@@ -402,7 +609,7 @@ export default function Index() {
                   d="M13 7l5 5m0 0l-5 5m5-5H6"
                 />
               </svg>
-            </Link>
+            </button>
             <a
               href="mailto:kieran@compx.io"
               className="inline-flex items-center px-8 py-4 rounded-xl border-2 border-white/30 text-white hover:bg-white/10 transition-colors duration-200"
@@ -419,14 +626,34 @@ export default function Index() {
           <span className="text-sm text-ink-500 dark:text-dark-text-muted">
             © {new Date().getFullYear()} Cairn, created by CompX Labs
           </span>
-          <Link
-            to="/demo"
+          <button
+            onClick={onViewDemo}
             className="text-sm font-medium text-brand-600 hover:text-brand-700"
           >
             See the demo →
-          </Link>
+          </button>
         </div>
       </footer>
     </div>
   );
 }
+
+function App() {
+  const [showDemo, setShowDemo] = useState(false);
+
+  return (
+    <WalletProvider>
+      <ThemeProvider>
+        <AsaProvider>
+          {showDemo ? (
+            <DemoSection />
+          ) : (
+            <LandingPage onViewDemo={() => setShowDemo(true)} />
+          )}
+        </AsaProvider>
+      </ThemeProvider>
+    </WalletProvider>
+  );
+}
+
+export default App;

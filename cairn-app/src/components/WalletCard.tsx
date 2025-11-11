@@ -1,7 +1,6 @@
-// app/components/WalletCard.tsx
-import { useNavigate } from "react-router";
-import type { TreasurySnapshot } from "~/types/treasury";
-import type { MultiNetworkWalletData } from "~/types/aptos";
+// src/components/WalletCard.tsx
+import type { TreasurySnapshot } from "../types/treasury";
+import type { MultiNetworkWalletData } from "../types/aptos";
 import { CopyButton } from "./CopyButton";
 import { ExplorerButton } from "./ExplorerButton";
 import { SkeletonCard, SkeletonTitle, SkeletonText } from "./Skeleton";
@@ -43,7 +42,6 @@ function getNetworkInfo(network?: string) {
 }
 
 export function WalletCard({ wallet, isLoading = false, label: fallbackLabel, address: fallbackAddress, network: fallbackNetwork }: WalletCardProps) {
-  const navigate = useNavigate();
   if (isLoading || !wallet) {
     return (
       <SkeletonCard>
@@ -88,14 +86,9 @@ export function WalletCard({ wallet, isLoading = false, label: fallbackLabel, ad
   
   const networkInfo = getNetworkInfo(network);
 
-  const handleCardClick = () => {
-    navigate(`/wallet/${address}`);
-  };
-
   return (
     <div 
-      className="bg-white dark:bg-dark-surface rounded-xl border border-line dark:border-dark-border p-6 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
-      onClick={handleCardClick}
+      className="bg-white dark:bg-dark-surface rounded-xl border border-line dark:border-dark-border p-6 shadow-sm hover:shadow-md transition-all duration-200"
     >
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">

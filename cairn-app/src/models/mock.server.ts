@@ -1,6 +1,6 @@
-// app/models/mock.server.ts
-import type { TreasurySnapshot, Tx, SerializableTx, NormalizedBalance } from "~/types/treasury";
-import { project } from "~/data/project";
+// src/models/mock.server.ts
+import type { TreasurySnapshot, Tx, SerializableTx, NormalizedBalance } from "../types/treasury";
+import { project } from "../data/project";
 
 // Simple utility to build explorer URLs for mock data
 const explorerTx = (hash: string) => `https://allo.info/tx/${hash}`;

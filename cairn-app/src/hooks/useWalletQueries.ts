@@ -1,12 +1,12 @@
-// app/hooks/useWalletQueries.ts
+// src/hooks/useWalletQueries.ts
 import { useQuery, useQueries } from "@tanstack/react-query";
 import axios from "axios";
-import { project } from "~/data/project";
-import { clientConfig } from "~/config/client";
-import type { WalletResponse, WalletData, TransactionsResponse, AlgorandTransaction } from "~/types/wallet";
-import type { SerializableTx } from "~/types/treasury";
-import type { AptosGraphQLResponse, AptosBalance, MultiNetworkWalletData } from "~/types/aptos";
-import { fetchAptosPrices, calculateUsdValue } from "~/services/aptosPricing";
+import { project } from "../data/project";
+import { clientConfig } from "../config/client";
+import type { WalletResponse, WalletData, TransactionsResponse, AlgorandTransaction } from "../types/wallet";
+import type { SerializableTx } from "../types/treasury";
+import type { AptosGraphQLResponse, AptosBalance, MultiNetworkWalletData } from "../types/aptos";
+import { fetchAptosPrices, calculateUsdValue } from "../services/aptosPricing";
 
 // API function to fetch wallet info
 async function fetchWalletInfo(address: string): Promise<WalletData> {

@@ -1,6 +1,6 @@
-// app/models/indexer.server.ts
-import type { Balance, Tx } from "~/types/treasury";
-import { project } from "~/data/project";
+// src/models/indexer.server.ts
+import type { Balance, Tx } from "../types/treasury";
+import { project } from "../data/project";
 
 export async function getWalletBalances(_address: string): Promise<Balance[]> {
   // TODO: Implement against Algorand Indexer

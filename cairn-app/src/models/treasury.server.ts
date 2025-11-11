@@ -1,8 +1,8 @@
-// app/models/treasury.server.ts
-import type { TreasurySnapshot, Tx, SerializableTx, NormalizedBalance, Balance, Asset } from "~/types/treasury";
-import { project } from "~/data/project";
-import { env } from "~/utils/env.server";
-import { cache } from "~/utils/cache.server";
+// src/models/treasury.server.ts
+import type { TreasurySnapshot, Tx, SerializableTx, NormalizedBalance, Balance, Asset } from "../types/treasury";
+import { project } from "../data/project";
+import { env } from "../utils/env.server";
+import { cache } from "../utils/cache.server";
 import { getMockSnapshot } from "./mock.server";
 import { getWalletBalances, getWalletTxs } from "./indexer.server";
 

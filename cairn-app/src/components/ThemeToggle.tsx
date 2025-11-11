@@ -1,5 +1,5 @@
 // app/components/ThemeToggle.tsx
-import { useTheme } from "~/contexts/ThemeContext";
+import { useTheme } from "../contexts/ThemeContext";
 import { useState, useEffect } from "react";
 
 export function ThemeToggle() {

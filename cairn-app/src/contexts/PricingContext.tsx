@@ -2,8 +2,8 @@
 import React, { createContext, useContext } from "react";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import type { PricingResponse, PricingContextType, PriceData } from "~/types/pricing";
-import { clientEnv } from "~/utils/env.client";
+import type { PricingResponse, PricingContextType, PriceData } from "../types/pricing";
+import { clientEnv } from "../utils/env.client";
 
 // Create QueryClient specifically for pricing data with 1-minute refetch
 const pricingQueryClient = new QueryClient({

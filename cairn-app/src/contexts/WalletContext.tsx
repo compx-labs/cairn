@@ -1,11 +1,11 @@
-// app/contexts/WalletContext.tsx
+// src/contexts/WalletContext.tsx
 import React, { createContext, useContext } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { project } from "~/data/project";
-import { useMultiNetworkWalletData, useAggregatedTransactions } from "~/hooks/useWalletQueries";
-import type { WalletData } from "~/types/wallet";
-import type { SerializableTx } from "~/types/treasury";
-import type { MultiNetworkWalletData } from "~/types/aptos";
+import { project } from "../data/project";
+import { useMultiNetworkWalletData, useAggregatedTransactions } from "../hooks/useWalletQueries";
+import type { WalletData } from "../types/wallet";
+import type { SerializableTx } from "../types/treasury";
+import type { MultiNetworkWalletData } from "../types/aptos";
 
 // Create QueryClient with global cache configuration
 const queryClient = new QueryClient({

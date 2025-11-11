@@ -1,5 +1,5 @@
 // app/components/TeamCard.tsx
-import { project } from "~/data/project";
+import { project } from "../data/project";
 
 export function TeamCard() {
   return (
